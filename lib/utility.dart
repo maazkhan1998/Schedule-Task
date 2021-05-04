@@ -13,8 +13,8 @@ class Utility{
   return "$hours:$minutes:$seconds";
 }
 
-showToast(String msg){
-  return Fluttertoast.showToast(msg: msg,gravity: ToastGravity.BOTTOM);
-}
+showToast(String msg) =>
+   Fluttertoast.showToast(msg: msg,gravity: ToastGravity.BOTTOM);
+
 
 }
