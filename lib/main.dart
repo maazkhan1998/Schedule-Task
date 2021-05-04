@@ -12,6 +12,9 @@ import 'package:timezone/timezone.dart' as tz;
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
+    
+    String compareDate=DateFormat('yyyy/MM/dd').format(DateTime.now());
+
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();

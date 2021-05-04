@@ -15,9 +15,6 @@ import 'package:timezone/timezone.dart' as tz;
 
 class StopwatchPage extends StatefulWidget {
 
-  String compareDate;
-
-  StopwatchPage(this.compareDate);
   @override
   _StopwatchPageState createState() => _StopwatchPageState();
 }
@@ -52,11 +49,13 @@ class _StopwatchPageState extends State<StopwatchPage> {
   void initState() {
     super.initState();
     _stopwatch = Stopwatch();
-    _timer = new Timer.periodic(new Duration(seconds :1), (timer)async{
+    _timer = new Timer.periodic(new Duration(seconds: 1), (timer)async{
       String currentDate=DateFormat('yyyy/MM/dd').format(DateTime.now());
-      if(widget.compareDate!=currentDate){
-        widget.compareDate=currentDate;
-        await Provider.of<TodayProvider>(context,listen:false).pauseTimer(_stopwatch.elapsedMilliseconds, currentDate);
+      if(compareDate!=currentDate){
+        print('datechanged');
+        compareDate=currentDate;
+        _stopwatch.reset();
+        await Provider.of<TodayProvider>(context,listen:false).resetTimer(currentDate);
         await Provider.of<TodayProvider>(context,listen:false).getTask(currentDate);
       }
       else{

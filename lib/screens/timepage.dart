@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screen_util.dart';
@@ -18,6 +20,19 @@ class TimePage extends StatefulWidget {
 
 
 class _TimePageState extends State<TimePage> {
+
+  
+
+  initState(){
+    Timer.periodic(Duration(seconds:3), (timer) { 
+      setState((){});
+    });
+    super.initState();
+  }
+
+  dispose(){
+    super.dispose();
+  }
   
 
   onTaskUpdate(String id,int val,String name)async{
@@ -58,7 +73,7 @@ class _TimePageState extends State<TimePage> {
             SizedBox(
               height: ScreenUtil().setHeight(30),
             ),
-            StopwatchPage(DateFormat('yyyy/MM/dd').format(DateTime.now())),
+            StopwatchPage(),
             SizedBox(
               height: ScreenUtil().setHeight(50),
             ),
