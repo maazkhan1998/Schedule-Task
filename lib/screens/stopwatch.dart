@@ -2,12 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_screenutil/screen_util.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:newui/provider/todayProvider.dart';
 import 'package:provider/provider.dart';
 
+import '../main.dart';
 import '../utility.dart';
+import 'package:timezone/timezone.dart' as tz; 
 
 class StopwatchPage extends StatefulWidget {
   @override
@@ -55,7 +58,7 @@ class _StopwatchPageState extends State<StopwatchPage> {
     super.dispose();
   }
 
-  void handleStartStop()async {
+  Future<void> handleStartStop()async {
     try{
     if (_stopwatch.isRunning) {
       _stopwatch.stop();
@@ -77,6 +80,24 @@ class _StopwatchPageState extends State<StopwatchPage> {
     await Provider.of<TodayProvider>(context,listen:false).resetTimer();
     }
     catch(e){
+      print(e);
+    }
+  }
+
+  onBreakTime()async{
+    print('Running');
+    try{
+      if(_stopwatch.isRunning) await handleStartStop();
+        await flutterLocalNotificationsPlugin.zonedSchedule
+        (0, 'Get Back to work', 'Break Time is over get back to work',
+         tz.TZDateTime.now(tz.local).add(const Duration(seconds: 10)),
+          const NotificationDetails(
+        android: AndroidNotificationDetails('0',
+            '0', 'your channel',playSound: true,importance: Importance.max,priority: Priority.high,visibility: NotificationVisibility.public,
+            enableLights: true,enableVibration: true,
+            )),
+             uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime, androidAllowWhileIdle: true); 
+    }catch(e){
       print(e);
     }
   }
@@ -185,6 +206,31 @@ class _StopwatchPageState extends State<StopwatchPage> {
             ],
           ),
         ),
+        SizedBox(height: ScreenUtil().setHeight(50)),
+         GestureDetector(
+           onTap: onBreakTime,
+                    child: SizedBox(
+                height: ScreenUtil().setHeight(70),
+                width: ScreenUtil().screenWidth / 1.6,
+                child: RaisedButton(
+                    color: Color(0xff5f77f4),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    onPressed:null,
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Text(
+                        "Start Break Time",
+                        style: TextStyle(
+                            letterSpacing: 1,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: ScreenUtil().setSp(33)),
+                      ),
+                    )),
+              ),
+         )
       ],
     );
   }

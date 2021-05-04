@@ -4,6 +4,7 @@ import 'package:newui/const.dart';
 import 'package:newui/helper/DBHelper.dart';
 import 'package:newui/model/task.dart';
 import 'package:newui/model/timer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TodayProvider with ChangeNotifier{
   final String date;
@@ -13,6 +14,25 @@ class TodayProvider with ChangeNotifier{
   List<Task> todayTask=[];
 
   Timer todayTimer=Timer(date: DateFormat('yyyy/MM/dd').format(DateTime.now()),time: 0);
+
+  bool isBreakTime=false;
+
+  Future<void> checkBreakTime()async{
+    try{
+      SharedPreferences _prefs=await SharedPreferences.getInstance();
+      if(_prefs.containsKey('break')) isBreakTime=true;
+      else isBreakTime=false;
+      notifyListeners();
+    }
+    catch(e){
+      throw e;
+    }
+  }
+  addNotification()async{
+    SharedPreferences _prefs=await SharedPreferences.getInstance();
+    await _prefs.setString('break', 'true');
+    await checkBreakTime();
+  }
 
   double get completedTask{
     if(todayTask.length==0) return 1.0;

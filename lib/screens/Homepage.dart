@@ -1,9 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:newui/provider/todayProvider.dart';
 import 'package:newui/screens/timepage.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:provider/provider.dart';
 
+import '../main.dart';
 import 'calendarscreen.dart';
 class HomePage extends StatefulWidget {
   @override
@@ -20,6 +23,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     getData();
+    initializeNotifications();
     _controller = PersistentTabController(initialIndex: 0);
     _hideNavBar = false;
   }
@@ -32,6 +36,45 @@ class _HomePageState extends State<HomePage> {
       print(e);
     }
   }
+
+  initializeNotifications(){
+    try{
+      const AndroidInitializationSettings initializationSettingsAndroid =
+    AndroidInitializationSettings('ic_launcher',);
+final IOSInitializationSettings initializationSettingsIOS =
+    IOSInitializationSettings(
+        onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+final InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+    iOS: initializationSettingsIOS);
+flutterLocalNotificationsPlugin.initialize(initializationSettings,
+    onSelectNotification: (_)async{});
+    }
+    catch(e){
+      print(e);
+    }
+  }
+
+  Future onDidReceiveLocalNotification(
+    int id, String title, String body, String payload) async {
+  print(title);
+  showDialog(
+    context: context,
+    builder: (BuildContext context) => CupertinoAlertDialog(
+      title: Text(title),
+      content: Text(body),
+      actions: [
+        CupertinoDialogAction(
+          isDefaultAction: true,
+          child: Text('Ok'),
+          onPressed: () async {
+           
+          },
+        )
+      ],
+    ),
+  );
+}
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [

@@ -1,3 +1,5 @@
+import 'package:fluttertoast/fluttertoast.dart';
+
 class Utility{
 
   static var shared=Utility();
@@ -9,6 +11,10 @@ class Utility{
   var seconds = (secs % 60).toString().padLeft(2, '0');
 
   return "$hours:$minutes:$seconds";
+}
+
+showToast(String msg){
+  return Fluttertoast.showToast(msg: msg,gravity: ToastGravity.BOTTOM);
 }
 
 }

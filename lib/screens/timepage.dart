@@ -97,30 +97,6 @@ class _TimePageState extends State<TimePage> {
             SizedBox(
               height: ScreenUtil().setHeight(50),
             ),
-            new SizedBox(
-              height: ScreenUtil().setHeight(70),
-              width: ScreenUtil().screenWidth / 1.6,
-              child: RaisedButton(
-                  color: Color(0xff5f77f4),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  onPressed: () {},
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Text(
-                      "Start Break Time",
-                      style: TextStyle(
-                          letterSpacing: 1,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: ScreenUtil().setSp(33)),
-                    ),
-                  )),
-            ),
-            SizedBox(
-              height: ScreenUtil().setHeight(50),
-            ),
             Text(
               "Today Todo",
               style: TextStyle(
