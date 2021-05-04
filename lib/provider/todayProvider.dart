@@ -40,21 +40,38 @@ class TodayProvider with ChangeNotifier{
     return completeTask.length/todayTask.length;
   }
 
-  getTodayData()async{
+  getTimer()async{
     try{
-      todayTask.clear();
-     final timer= await DBHelper.shared.getDataByQueryTimer(timerTable, date);
-     final tasks=await DBHelper.shared.getDataByQueryTask(taskTable, date);
-
-     if(timer.isNotEmpty)
+      final timer= await DBHelper.shared.getDataByQueryTimer(timerTable, date);
+      if(timer.isNotEmpty)
        todayTimer=Timer.fromJson(timer[0]);
      else await DBHelper.shared.insertTimer(timerTable, {"date":"$date","time":0.0});
+
+     notifyListeners();
+    }catch(e){
+      throw e;
+    }
+  }
+
+  getTask()async{
+    try{
+      todayTask.clear();
+      final tasks=await DBHelper.shared.getDataByQueryTask(taskTable, date);
 
      if(tasks.isNotEmpty)tasks.forEach((element) {
        todayTask.add(Task.fromJson(element));
      });
 
      notifyListeners();
+    }catch(e){
+      throw e;
+    }
+  }
+
+  getTodayData()async{
+    try{
+    await getTimer();
+    await getTask();
     }
     catch(e){
       throw e;
@@ -64,7 +81,7 @@ class TodayProvider with ChangeNotifier{
   resetTimer()async{
     try{
      await  DBHelper.shared.updateDataTimer(timerTable, date, {"date":"$date","time":0});
-     await getTodayData();
+     await getTimer();
     }catch(e){
       throw e;
     }
@@ -73,7 +90,7 @@ class TodayProvider with ChangeNotifier{
   pauseTimer(int time)async{
     try{
       await DBHelper.shared.updateDataTimer(timerTable, date, {"date":"$date","time":time+todayTimer.time});
-      await getTodayData();
+      await getTimer();
     }catch(e){
       throw e;
     }
@@ -82,7 +99,7 @@ class TodayProvider with ChangeNotifier{
   setCustomTimer(int time)async{
     try{
       await DBHelper.shared.updateDataTimer(timerTable, date, {"date":"$date","time":time});
-      await getTodayData();
+      await getTimer();
     }catch(e){
       throw e;
     }
@@ -91,7 +108,7 @@ class TodayProvider with ChangeNotifier{
   addTask(String name)async{
     try{
      await DBHelper.shared.insertTodoTask(taskTable, {"id":DateTime.now().toString(),"date":date,"name":name,"isDone":0});
-     await getTodayData();
+     await getTask();
     }catch(e){
       throw e;
     }
@@ -100,7 +117,7 @@ class TodayProvider with ChangeNotifier{
   updateTask(String id,int val,String name)async{
     try{
      await DBHelper.shared.updateDataTask(taskTable, id, {"id":id,"date":date,"name":name,"isDone":val==0?1:0});
-     await getTodayData();
+     await getTask();
     }catch(e){
       throw e;
     }

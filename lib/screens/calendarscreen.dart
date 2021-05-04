@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:newui/model/task.dart';
 import 'package:newui/screens/timepage.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -148,7 +149,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 height: ScreenUtil().setHeight(20),
               ),
               ListView.builder(
-                itemBuilder: (context, i) => HomeWorkTile(0),
+                itemBuilder: (context, i) => HomeWorkTile(Task()),
                 itemCount: 8,
                 shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),

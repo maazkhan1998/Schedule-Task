@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screen_util.dart';
 import 'package:intl/intl.dart';
+import 'package:newui/model/task.dart';
 import 'package:newui/provider/todayProvider.dart';
 import 'package:newui/screens/stopwatch.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -123,7 +124,7 @@ class _TimePageState extends State<TimePage> {
             ListView.builder(
               itemBuilder: (ctx, i) => GestureDetector(
                 onTap: ()=>onTaskUpdate(todayData.todayTask[i].id,todayData.todayTask[i].isDone,todayData.todayTask[i].name),
-                child: HomeWorkTile(todayData.todayTask[i].isDone)),
+                child: HomeWorkTile(todayData.todayTask[i])),
               itemCount: todayData.todayTask.length,
               physics: ClampingScrollPhysics(),
               shrinkWrap: true,
@@ -151,9 +152,9 @@ class _TimePageState extends State<TimePage> {
 
 class HomeWorkTile extends StatefulWidget {
 
-  final int isDone;
+  final Task task;
 
-  HomeWorkTile(this.isDone);
+  HomeWorkTile(this.task);
   @override
   _HomeWorkTileState createState() => _HomeWorkTileState();
 }
@@ -177,7 +178,7 @@ class _HomeWorkTileState extends State<HomeWorkTile> {
             height: ScreenUtil().setHeight(40),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: widget.isDone == 1 ? Color(0xff7654f6) : Colors.white,
+              color: widget.task.isDone == 1 ? Color(0xff7654f6) : Colors.white,
               border: Border.all(
                 color: Color(0xff7654f6),
               ),
@@ -190,7 +191,7 @@ class _HomeWorkTileState extends State<HomeWorkTile> {
           ),
           SizedBox(width: ScreenUtil().setWidth(40)),
           Text(
-            "Homework",
+            widget.task.name,
             style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
