@@ -7,9 +7,6 @@ import 'package:newui/model/timer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TodayProvider with ChangeNotifier{
-  final String date;
-
-  TodayProvider(this.date);
 
   List<Task> todayTask=[];
 
@@ -40,7 +37,7 @@ class TodayProvider with ChangeNotifier{
     return completeTask.length/todayTask.length;
   }
 
-  getTimer()async{
+  getTimer(String date)async{
     try{
       final timer= await DBHelper.shared.getDataByQueryTimer(timerTable, date);
       if(timer.isNotEmpty)
@@ -53,7 +50,7 @@ class TodayProvider with ChangeNotifier{
     }
   }
 
-  getTask()async{
+  getTask(String date)async{
     try{
       todayTask.clear();
       final tasks=await DBHelper.shared.getDataByQueryTask(taskTable, date);
@@ -68,57 +65,67 @@ class TodayProvider with ChangeNotifier{
     }
   }
 
-  getTodayData()async{
+  getTodayData(String date)async{
     try{
-    await getTimer();
-    await getTask();
+    await getTimer(date);
+    await getTask(date);
     }
     catch(e){
       throw e;
     }
   }
 
-  resetTimer()async{
+  resetTimer(String date)async{
     try{
      await  DBHelper.shared.updateDataTimer(timerTable, date, {"date":"$date","time":0});
-     await getTimer();
+     await getTimer(date);
     }catch(e){
       throw e;
     }
   }
 
-  pauseTimer(int time)async{
+  pauseTimer(int time,String date)async{
     try{
       await DBHelper.shared.updateDataTimer(timerTable, date, {"date":"$date","time":time+todayTimer.time});
-      await getTimer();
+      await getTimer(date);
     }catch(e){
       throw e;
     }
   }
 
-  setCustomTimer(int time)async{
+  setCustomTimer(int time,String date)async{
     try{
       await DBHelper.shared.updateDataTimer(timerTable, date, {"date":"$date","time":time});
-      await getTimer();
+      await getTimer(date);
     }catch(e){
       throw e;
     }
   }
 
-  addTask(String name)async{
+  addTask(String name,String date)async{
     try{
      await DBHelper.shared.insertTodoTask(taskTable, {"id":DateTime.now().toString(),"date":date,"name":name,"isDone":0});
-     await getTask();
+     await getTask(date);
     }catch(e){
       throw e;
     }
   }
 
-  updateTask(String id,int val,String name)async{
+  updateTask(String id,int val,String name,String date)async{
     try{
      await DBHelper.shared.updateDataTask(taskTable, id, {"id":id,"date":date,"name":name,"isDone":val==0?1:0});
-     await getTask();
+     await getTask(date);
     }catch(e){
+      throw e;
+    }
+  }
+
+  deleteTask(String id,String date)async{
+    try{
+      await DBHelper.shared.deleteDataTask(taskTable, id);
+      await getTask(date);
+    }
+    catch(e){
       throw e;
     }
   }

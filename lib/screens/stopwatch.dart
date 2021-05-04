@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_screenutil/screen_util.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:newui/provider/todayProvider.dart';
 import 'package:provider/provider.dart';
 
@@ -13,6 +14,10 @@ import '../utility.dart';
 import 'package:timezone/timezone.dart' as tz; 
 
 class StopwatchPage extends StatefulWidget {
+
+  String compareDate;
+
+  StopwatchPage(this.compareDate);
   @override
   _StopwatchPageState createState() => _StopwatchPageState();
 }
@@ -24,7 +29,7 @@ class _StopwatchPageState extends State<StopwatchPage> {
 
 
   showAlertDialog(BuildContext context) async{
-    if(_stopwatch.isRunning) return print('Stop timer to edit');
+    if(_stopwatch.isRunning) return Utility.shared.showToast('Stop timer to edit');
    return await showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
@@ -35,7 +40,7 @@ class _StopwatchPageState extends State<StopwatchPage> {
               secondInterval: 1,
               initialTimerDuration: initialtimer,
               onTimerDurationChanged: (Duration changedtimer) async{
-                 await Provider.of<TodayProvider>(context,listen:false).setCustomTimer(changedtimer.inMilliseconds);
+                 await Provider.of<TodayProvider>(context,listen:false).setCustomTimer(changedtimer.inMilliseconds,DateFormat('yyyy/MM/dd').format(DateTime.now()));
                  _stopwatch.reset();
               },
           );
@@ -47,7 +52,19 @@ class _StopwatchPageState extends State<StopwatchPage> {
   void initState() {
     super.initState();
     _stopwatch = Stopwatch();
-    _timer = new Timer.periodic(new Duration(milliseconds: 30), (timer) {
+    _timer = new Timer.periodic(new Duration(seconds :1), (timer)async{
+      String currentDate=DateFormat('yyyy/MM/dd').format(DateTime.now());
+      if(widget.compareDate!=currentDate){
+        widget.compareDate=currentDate;
+        await Provider.of<TodayProvider>(context,listen:false).pauseTimer(_stopwatch.elapsedMilliseconds, currentDate);
+        await Provider.of<TodayProvider>(context,listen:false).getTask(currentDate);
+      }
+      else{
+        if(_stopwatch.isRunning){
+        await Provider.of<TodayProvider>(context,listen:false).pauseTimer(_stopwatch.elapsedMilliseconds, currentDate);
+        _stopwatch.reset();
+        }
+      }
       setState(() {});
     });
   }
@@ -62,7 +79,7 @@ class _StopwatchPageState extends State<StopwatchPage> {
     try{
     if (_stopwatch.isRunning) {
       _stopwatch.stop();
-     await Provider.of<TodayProvider>(context,listen:false).pauseTimer(_stopwatch.elapsedMilliseconds);
+     await Provider.of<TodayProvider>(context,listen:false).pauseTimer(_stopwatch.elapsedMilliseconds,DateFormat('yyyy/MM/dd').format(DateTime.now()));
      _stopwatch.reset();
     } else {
       _stopwatch.start();
@@ -77,7 +94,7 @@ class _StopwatchPageState extends State<StopwatchPage> {
   _resetTime()async{
     try{
     _stopwatch.reset();
-    await Provider.of<TodayProvider>(context,listen:false).resetTimer();
+    await Provider.of<TodayProvider>(context,listen:false).resetTimer(DateFormat('yyyy/MM/dd').format(DateTime.now()));
     }
     catch(e){
       print(e);
@@ -85,9 +102,9 @@ class _StopwatchPageState extends State<StopwatchPage> {
   }
 
   onBreakTime()async{
-    print('Running');
     try{
       if(_stopwatch.isRunning) await handleStartStop();
+      Utility.shared.showToast('Break time started');
         await flutterLocalNotificationsPlugin.zonedSchedule
         (0, 'Get Back to work', 'Break Time is over get back to work',
          tz.TZDateTime.now(tz.local).add(const Duration(seconds: 10)),
@@ -207,30 +224,27 @@ class _StopwatchPageState extends State<StopwatchPage> {
           ),
         ),
         SizedBox(height: ScreenUtil().setHeight(50)),
-         GestureDetector(
-           onTap: onBreakTime,
-                    child: SizedBox(
+         SizedBox(
                 height: ScreenUtil().setHeight(70),
                 width: ScreenUtil().screenWidth / 1.6,
                 child: RaisedButton(
-                    color: Color(0xff5f77f4),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    onPressed:null,
-                    child: Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: Text(
-                        "Start Break Time",
-                        style: TextStyle(
-                            letterSpacing: 1,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: ScreenUtil().setSp(33)),
-                      ),
-                    )),
-              ),
-         )
+         color: Color(0xff5f77f4),
+         shape: RoundedRectangleBorder(
+           borderRadius: BorderRadius.circular(30),
+         ),
+         onPressed:onBreakTime,
+         child: Padding(
+           padding: const EdgeInsets.all(2.0),
+           child: Text(
+             "Start Break Time",
+             style: TextStyle(
+                 letterSpacing: 1,
+                 color: Colors.white,
+                 fontWeight: FontWeight.bold,
+                 fontSize: ScreenUtil().setSp(33)),
+           ),
+         )),
+              )
       ],
     );
   }

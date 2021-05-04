@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screen_util.dart';
 import 'package:intl/intl.dart';
+import 'package:newui/dialogs/dialogs.dart';
 import 'package:newui/model/task.dart';
 import 'package:newui/provider/todayProvider.dart';
 import 'package:newui/screens/stopwatch.dart';
+import 'package:newui/utility.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 
@@ -16,49 +18,11 @@ class TimePage extends StatefulWidget {
 
 
 class _TimePageState extends State<TimePage> {
-  TextEditingController controller=TextEditingController();
-  showTextField(BuildContext context) {
-    // set up the button
-    Widget okButton = TextButton(
-      child: Text("Save"),
-      onPressed: () {
-        try{
-        if(controller.text.isEmpty) print('Enter task name');
-        else{
-          Provider.of<TodayProvider>(context,listen:false).addTask(controller.text);
-          Navigator.of(context,rootNavigator: true).pop();
-        }
-        }catch(e){
-          print(e);
-        }
-      },
-    );
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      // content: Text("Link has been sent to your Email Account"),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: controller,
-            decoration: InputDecoration(hintText: "Add Task name"),
-          )
-        ],
-      ),
-      actions: [okButton],
-    );
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
+  
 
   onTaskUpdate(String id,int val,String name)async{
     try{
-     await Provider.of<TodayProvider>(context,listen:false).updateTask(id, val, name);
+     await Provider.of<TodayProvider>(context,listen:false).updateTask(id, val, name,DateFormat('yyyy/MM/dd').format(DateTime.now()));
     }
     catch(e){
       print(e);
@@ -94,7 +58,7 @@ class _TimePageState extends State<TimePage> {
             SizedBox(
               height: ScreenUtil().setHeight(30),
             ),
-            StopwatchPage(),
+            StopwatchPage(DateFormat('yyyy/MM/dd').format(DateTime.now())),
             SizedBox(
               height: ScreenUtil().setHeight(50),
             ),
@@ -130,7 +94,7 @@ class _TimePageState extends State<TimePage> {
               shrinkWrap: true,
             ),
             GestureDetector(
-              onTap: () => showTextField(context),
+              onTap: () => Dialogs.shared.showTextField(context),
               child: Container(
                 margin: EdgeInsets.all(6),
                 alignment: Alignment.center,
@@ -160,6 +124,14 @@ class HomeWorkTile extends StatefulWidget {
 }
 
 class _HomeWorkTileState extends State<HomeWorkTile> {
+
+  deleteTask(String id)async{
+    try{
+     await Dialogs.shared.deleteTaskDialog(context, id);
+    }catch(e){
+      Utility.shared.showToast(e.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -197,6 +169,10 @@ class _HomeWorkTileState extends State<HomeWorkTile> {
                 fontWeight: FontWeight.bold,
                 fontSize: ScreenUtil().setSp(29)),
           ),
+          Spacer(),
+          GestureDetector(
+            onTap: ()=>deleteTask(widget.task.id),
+            child: Icon(Icons.delete_outline_rounded,size:30,color:Color(0xff7654f6))),
         ]),
       ),
     );

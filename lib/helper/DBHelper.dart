@@ -32,7 +32,7 @@ class DBHelper{
 
     Future<void> updateDataTimer(String table,String date,Map<String,Object>data)async{
     final db=await timerdatabase();
-    db.update(table,data,where: 'date=?',whereArgs: [date]);
+    await db.update(table,data,where: 'date=?',whereArgs: [date]);
   }
 
   Future<List<Map<String,dynamic>>> getDataByQueryTimer(String table,String date)async{
@@ -59,9 +59,9 @@ class DBHelper{
     return db.query(table);
   }
 
-   Future<void> deleteDataTask(String table,String date)async{
+   Future<void> deleteDataTask(String table,String id)async{
     final db=await taskdatabase();
-    db.delete(table,where: 'date=?',whereArgs: [date]);
+    await db.delete(table,where: 'id=?',whereArgs: [id]);
   }
 
     Future<void> updateDataTask(String table,String id,Map<String,Object>data)async{

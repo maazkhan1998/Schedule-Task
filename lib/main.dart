@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       designSize:  Size(750, 1334),
           builder :() => MultiProvider(
             providers: [
-              ChangeNotifierProvider.value(value: TodayProvider(DateFormat('yyyy/MM/dd').format(DateTime.now())))
+              ChangeNotifierProvider.value(value: TodayProvider())
             ],
       builder:(context,_)=> MaterialApp(
       debugShowCheckedModeBanner: false,

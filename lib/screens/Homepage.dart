@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:intl/intl.dart';
 import 'package:newui/provider/todayProvider.dart';
 import 'package:newui/screens/timepage.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -30,7 +31,7 @@ class _HomePageState extends State<HomePage> {
 
   getData()async{
     try{
-   await  Provider.of<TodayProvider>(context,listen: false).getTodayData();
+   await  Provider.of<TodayProvider>(context,listen: false).getTodayData(DateFormat('yyyy/MM/dd').format(DateTime.now()));
    setState(()=>isLoading=false);
     }catch(e){
       print(e);
