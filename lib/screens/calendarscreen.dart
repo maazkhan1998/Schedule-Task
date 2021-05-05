@@ -1,9 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:newui/model/task.dart';
+import 'package:newui/provider/calendarProvider.dart';
 import 'package:newui/screens/timepage.dart';
+import 'package:newui/utility.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -12,8 +16,16 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
-  CalendarController calendarController = CalendarController();
+  CalendarController calendarController;
   Duration initialtimer = new Duration();
+  DateTime currentDate=DateTime.now();
+
+  initState(){
+    calendarController = CalendarController();
+    // calendarController.setSelectedDay(DateTime.now(),runCallback: true);
+    // print(calendarController.selectedDay);
+    super.initState();
+  }
   showAlertDialog(BuildContext context) {
     // show the dialog
     return showCupertinoDialog(
@@ -25,15 +37,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
           minuteInterval: 1,
           secondInterval: 1,
           initialTimerDuration: initialtimer,
-          onTimerDurationChanged: (Duration changedtimer) {
-            setState(() {
-              initialtimer = changedtimer;
-            });
+          onTimerDurationChanged: (Duration changedtimer) async{
+            try{
+            await Provider.of<CalendarProvider>(context,listen:false).updateTimer(DateFormat('yyyy/MM/dd').format(currentDate), changedtimer.inMilliseconds);
+            }
+            catch(e){
+              Utility.shared.showToast(e.toString());
+            }
           },
         );
       },
     );
   }
+
+  changeDate(DateTime date,List<dynamic> list,List<dynamic> secondList)=>setState(()=>currentDate=date);
+  
 
   showTextField(BuildContext context) {
     // set up the button
@@ -67,6 +85,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final calendarData=Provider.of<CalendarProvider>(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -75,6 +94,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
             //    mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TableCalendar(
+                onDaySelected: changeDate,
+                endDay: DateTime.now(),
+                events:calendarData.events() ,
+                initialSelectedDay: DateTime.now(),
                 calendarController: calendarController,
               ),
               SizedBox(
@@ -114,7 +137,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       ),
                     ),
                     Spacer(),
-                    Watch(),
+                    Watch(calendarData.selectedDateTime(DateFormat('yyyy/MM/dd').format(currentDate)).time),
                     Spacer(),
                     Padding(
                       padding: const EdgeInsets.only(right: 30.0),
@@ -149,8 +172,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 height: ScreenUtil().setHeight(20),
               ),
               ListView.builder(
-                itemBuilder: (context, i) => HomeWorkTile(Task()),
-                itemCount: 8,
+                padding: EdgeInsets.symmetric(horizontal:ScreenUtil().setWidth(20)),
+                itemBuilder: (context, i) => HomeWorkTile(calendarData.selectedDateTask(DateFormat('yyyy/MM/dd').format(currentDate))[i]),
+                itemCount: calendarData.selectedDateTask(DateFormat('yyyy/MM/dd').format(currentDate)).length,
                 shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
               ),
@@ -177,6 +201,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
 }
 
 class Watch extends StatefulWidget {
+
+  final double time;
+
+  Watch(this.time);
   @override
   _WatchState createState() => _WatchState();
 }
@@ -186,7 +214,7 @@ class _WatchState extends State<Watch> {
   @override
   Widget build(BuildContext context) {
     return Text(
-      '20 : 14 : 30',
+      Utility.shared.formatTime(widget.time.toInt()),
       style: TextStyle(
           color: Colors.black,
           fontWeight: FontWeight.bold,

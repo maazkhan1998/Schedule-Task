@@ -3,6 +3,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:flutter_screenutil/screenutil_init.dart';
 import 'package:intl/intl.dart';
+import 'package:newui/provider/calendarProvider.dart';
 import 'package:newui/provider/todayProvider.dart';
 import 'package:newui/screens/Homepage.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +33,8 @@ class MyApp extends StatelessWidget {
       designSize:  Size(750, 1334),
           builder :() => MultiProvider(
             providers: [
-              ChangeNotifierProvider.value(value: TodayProvider())
+              ChangeNotifierProvider.value(value: TodayProvider()),
+              ChangeNotifierProvider.value(value: CalendarProvider())
             ],
       builder:(context,_)=> MaterialApp(
       debugShowCheckedModeBanner: false,

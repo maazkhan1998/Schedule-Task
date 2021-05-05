@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
+import 'package:newui/provider/calendarProvider.dart';
 import 'package:newui/provider/todayProvider.dart';
 import 'package:newui/screens/shimmerScreen.dart';
 import 'package:newui/screens/timepage.dart';
@@ -36,6 +37,7 @@ class _HomePageState extends State<HomePage> {
     Timer(Duration(seconds: 3),()async{
       try{
    await  Provider.of<TodayProvider>(context,listen: false).getTodayData(DateFormat('yyyy/MM/dd').format(DateTime.now()));
+   await Provider.of<CalendarProvider>(context,listen:false).getAllData();
    setState(()=>isLoading=false);
     }catch(e){
       print(e);
