@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:newui/provider/todayProvider.dart';
+import 'package:newui/screens/shimmerScreen.dart';
 import 'package:newui/screens/timepage.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:provider/provider.dart';
@@ -29,13 +32,16 @@ class _HomePageState extends State<HomePage> {
     _hideNavBar = false;
   }
 
-  getData()async{
-    try{
+  getData(){
+    Timer(Duration(seconds: 3),()async{
+      try{
    await  Provider.of<TodayProvider>(context,listen: false).getTodayData(DateFormat('yyyy/MM/dd').format(DateTime.now()));
    setState(()=>isLoading=false);
     }catch(e){
       print(e);
     }
+    });
+    
   }
 
   initializeNotifications(){
@@ -97,7 +103,7 @@ flutterLocalNotificationsPlugin.initialize(initializationSettings,
 
   @override
   Widget build(BuildContext context) {
-    return isLoading?Center(child:CircularProgressIndicator()): PersistentTabView(
+    return isLoading?ShimmerScreen(): PersistentTabView(
         context,
         controller: _controller,
         screens: [

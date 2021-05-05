@@ -15,6 +15,9 @@ class Dialogs{
       builder: (_)=>SimpleDialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
+          side: BorderSide(
+            color: Color(0xff7654f6),width: 2,
+          )
         ),
         title: Center(child: Text('Delete Task')),
         children: [
@@ -74,6 +77,10 @@ class Dialogs{
     );
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: Color(0xff5f77f4),width: 2)
+      ),
       // content: Text("Link has been sent to your Email Account"),
       content: Column(
         mainAxisSize: MainAxisSize.min,
