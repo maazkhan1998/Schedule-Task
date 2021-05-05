@@ -1,29 +1,33 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
-import 'package:newui/model/task.dart';
+import 'package:newui/dialogs/dialogs.dart';
 import 'package:newui/provider/calendarProvider.dart';
-import 'package:newui/screens/timepage.dart';
+import 'package:newui/screens/calendarPageTaskScreen.dart';
 import 'package:newui/utility.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+
+DateTime calendarCurrentDate=DateTime.now();
 
 class CalendarScreen extends StatefulWidget {
   @override
   _CalendarScreenState createState() => _CalendarScreenState();
 }
 
-class _CalendarScreenState extends State<CalendarScreen> {
+class _CalendarScreenState extends State<CalendarScreen>  {
+
   CalendarController calendarController;
   Duration initialtimer = new Duration();
-  DateTime currentDate=DateTime.now();
 
   initState(){
     calendarController = CalendarController();
-    // calendarController.setSelectedDay(DateTime.now(),runCallback: true);
-    // print(calendarController.selectedDay);
+    Timer.periodic(Duration(milliseconds: 800), (timer) async{ 
+      await Provider.of<CalendarProvider>(context,listen:false).getAllTimer();
+    });
     super.initState();
   }
   showAlertDialog(BuildContext context) {
@@ -39,7 +43,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           initialTimerDuration: initialtimer,
           onTimerDurationChanged: (Duration changedtimer) async{
             try{
-            await Provider.of<CalendarProvider>(context,listen:false).updateTimer(DateFormat('yyyy/MM/dd').format(currentDate), changedtimer.inMilliseconds);
+            await Provider.of<CalendarProvider>(context,listen:false).updateTimer(formateDate(calendarCurrentDate), changedtimer.inMilliseconds);
             }
             catch(e){
               Utility.shared.showToast(e.toString());
@@ -50,38 +54,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  changeDate(DateTime date,List<dynamic> list,List<dynamic> secondList)=>setState(()=>currentDate=date);
-  
-
-  showTextField(BuildContext context) {
-    // set up the button
-    Widget okButton = TextButton(
-      child: Text("Save"),
-      onPressed: () {
-        //   Navigator.of(context).pop();
-      },
-    );
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      // content: Text("Link has been sent to your Email Account"),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            decoration: InputDecoration(hintText: "Add Task name"),
-          )
-        ],
-      ),
-      actions: [okButton],
-    );
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
+  changeDate(DateTime date,List<dynamic> list,List<dynamic> secondList)=>setState(()=>calendarCurrentDate=date);
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +110,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       ),
                     ),
                     Spacer(),
-                    Watch(calendarData.selectedDateTime(DateFormat('yyyy/MM/dd').format(currentDate)).time),
+                    Watch(calendarData.selectedDateTime(formateDate(calendarCurrentDate)).time),
                     Spacer(),
                     Padding(
                       padding: const EdgeInsets.only(right: 30.0),
@@ -161,7 +134,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     child: LinearPercentIndicator(
                       width: ScreenUtil().screenWidth * .7,
                       lineHeight: 10.0,
-                      percent: .40,
+                      percent: calendarData.selectedDateProgress(formateDate(calendarCurrentDate)),
                       backgroundColor: Colors.grey[300],
                       progressColor: Color(0xff7654f6),
                     ),
@@ -173,13 +146,28 @@ class _CalendarScreenState extends State<CalendarScreen> {
               ),
               ListView.builder(
                 padding: EdgeInsets.symmetric(horizontal:ScreenUtil().setWidth(20)),
-                itemBuilder: (context, i) => HomeWorkTile(calendarData.selectedDateTask(DateFormat('yyyy/MM/dd').format(currentDate))[i]),
-                itemCount: calendarData.selectedDateTask(DateFormat('yyyy/MM/dd').format(currentDate)).length,
+                itemBuilder: (context, i) => 
+                GestureDetector
+                (
+                  onTap: ()async{
+                    try{
+                     await Provider.of<CalendarProvider>(context,listen:false).
+                     updateTask(calendarData.selectedDateTask(formateDate(calendarCurrentDate))[i].date,
+                      calendarData.selectedDateTask(formateDate(calendarCurrentDate))[i].id, 
+                      calendarData.selectedDateTask(formateDate(calendarCurrentDate))[i].isDone,
+                       calendarData.selectedDateTask(formateDate(calendarCurrentDate))[i].name);
+                    }catch(e){
+                      Utility.shared.showToast(e.toString());
+                    }
+                  },
+                  child: 
+                  CalendarPageTaskScreen(calendarData.selectedDateTask(formateDate(calendarCurrentDate))[i])),
+                itemCount: calendarData.selectedDateTask(formateDate(calendarCurrentDate)).length,
                 shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
               ),
               GestureDetector(
-                onTap: () => showTextField(context),
+                onTap: () => Dialogs.shared.showTextFieldCalendarPage(context,calendarCurrentDate),
                 child: Container(
                   margin: EdgeInsets.all(6),
                   alignment: Alignment.center,

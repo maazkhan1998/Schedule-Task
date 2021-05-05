@@ -1,4 +1,5 @@
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 
 class Utility{
 
@@ -18,3 +19,5 @@ showToast(String msg) =>
 
 
 }
+
+String formateDate(DateTime date)=>DateFormat('yyyy/MM/dd').format(date);

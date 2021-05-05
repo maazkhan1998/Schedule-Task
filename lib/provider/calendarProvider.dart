@@ -9,6 +9,11 @@ class CalendarProvider with ChangeNotifier{
 
   List<Task> allTask=[];
 
+  double selectedDateProgress(String date){
+   if(selectedDateTask(date).isEmpty) return 0.0;
+   return selectedDateTask(date).where((element) => element.isDone==1).toList().length/selectedDateTask(date).length;
+  }
+
   List<Task> selectedDateTask(String date){
     return allTask.where((element) => element.date==date).toList();
   }
@@ -84,6 +89,34 @@ class CalendarProvider with ChangeNotifier{
       await getAllTimer();
     }
     catch(e){
+      throw e;
+    }
+  }
+
+  updateTask(String date,String id,int val,String name)async{
+    try{
+     await DBHelper.shared.updateDataTask(taskTable, id, {"id":id,"date":date,"name":name,"isDone":val==0?1:0});
+     await getAllTask();
+    }catch(e){
+      throw e;
+    }
+  }
+
+   deleteTask(String id)async{
+    try{
+      await DBHelper.shared.deleteDataTask(taskTable, id);
+      await getAllTask();
+    }
+    catch(e){
+      throw e;
+    }
+  }
+
+  addTask(String name,String date)async{
+    try{
+     await DBHelper.shared.insertTodoTask(taskTable, {"id":DateTime.now().toString(),"date":date,"name":name,"isDone":0});
+     await getAllTask();
+    }catch(e){
       throw e;
     }
   }

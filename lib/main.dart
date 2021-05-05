@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:flutter_screenutil/screenutil_init.dart';
-import 'package:intl/intl.dart';
 import 'package:newui/provider/calendarProvider.dart';
 import 'package:newui/provider/todayProvider.dart';
 import 'package:newui/screens/Homepage.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;  
+import 'package:timezone/timezone.dart' as tz;
+
+import 'package:newui/utility.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
     
-    String compareDate=DateFormat('yyyy/MM/dd').format(DateTime.now());
+    String compareDate=formateDate(DateTime.now());
 
 
 void main() async{

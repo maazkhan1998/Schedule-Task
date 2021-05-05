@@ -1,16 +1,16 @@
 import 'package:flutter/cupertino.dart';
-import 'package:intl/intl.dart';
 import 'package:newui/const.dart';
 import 'package:newui/helper/DBHelper.dart';
 import 'package:newui/model/task.dart';
 import 'package:newui/model/timer.dart';
+import 'package:newui/utility.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TodayProvider with ChangeNotifier{
 
   List<Task> todayTask=[];
 
-  Timer todayTimer=Timer(date: DateFormat('yyyy/MM/dd').format(DateTime.now()),time: 0);
+  Timer todayTimer=Timer(date: formateDate(DateTime.now()),time: 0);
 
   bool isBreakTime=false;
 

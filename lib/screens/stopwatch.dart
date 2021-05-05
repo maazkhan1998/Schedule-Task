@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_screenutil/screen_util.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:newui/provider/todayProvider.dart';
+import 'package:newui/screens/calendarscreen.dart';
 import 'package:provider/provider.dart';
 
 import '../main.dart';
@@ -37,7 +37,7 @@ class _StopwatchPageState extends State<StopwatchPage> {
               secondInterval: 1,
               initialTimerDuration: initialtimer,
               onTimerDurationChanged: (Duration changedtimer) async{
-                 await Provider.of<TodayProvider>(context,listen:false).setCustomTimer(changedtimer.inMilliseconds,DateFormat('yyyy/MM/dd').format(DateTime.now()));
+                 await Provider.of<TodayProvider>(context,listen:false).setCustomTimer(changedtimer.inMilliseconds,formateDate(DateTime.now()));
                  _stopwatch.reset();
               },
           );
@@ -50,10 +50,11 @@ class _StopwatchPageState extends State<StopwatchPage> {
     super.initState();
     _stopwatch = Stopwatch();
     _timer = new Timer.periodic(new Duration(seconds: 1), (timer)async{
-      String currentDate=DateFormat('yyyy/MM/dd').format(DateTime.now());
+      String currentDate=formateDate(DateTime.now());
       if(compareDate!=currentDate){
         print('datechanged');
         compareDate=currentDate;
+        calendarCurrentDate=DateTime.now();
         _stopwatch.reset();
         await Provider.of<TodayProvider>(context,listen:false).resetTimer(currentDate);
         await Provider.of<TodayProvider>(context,listen:false).getTask(currentDate);
@@ -78,7 +79,7 @@ class _StopwatchPageState extends State<StopwatchPage> {
     try{
     if (_stopwatch.isRunning) {
       _stopwatch.stop();
-     await Provider.of<TodayProvider>(context,listen:false).pauseTimer(_stopwatch.elapsedMilliseconds,DateFormat('yyyy/MM/dd').format(DateTime.now()));
+     await Provider.of<TodayProvider>(context,listen:false).pauseTimer(_stopwatch.elapsedMilliseconds,formateDate(DateTime.now()));
      _stopwatch.reset();
     } else {
       _stopwatch.start();
@@ -93,7 +94,7 @@ class _StopwatchPageState extends State<StopwatchPage> {
   _resetTime()async{
     try{
     _stopwatch.reset();
-    await Provider.of<TodayProvider>(context,listen:false).resetTimer(DateFormat('yyyy/MM/dd').format(DateTime.now()));
+    await Provider.of<TodayProvider>(context,listen:false).resetTimer(formateDate(DateTime.now()));
     }
     catch(e){
       print(e);

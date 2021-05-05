@@ -1,15 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
+import 'package:newui/provider/calendarProvider.dart';
 import 'package:newui/provider/todayProvider.dart';
 import 'package:provider/provider.dart';
+
+import '../utility.dart';
 
 class Dialogs{
 
   static var shared=Dialogs();
 
-  deleteTaskDialog(BuildContext context,String id)async{
+  deleteTaskDialog(BuildContext context,String id,Function func)async{
     return await showDialog(
       context: context,
       builder: (_)=>SimpleDialog(
@@ -37,15 +39,7 @@ class Dialogs{
                 ),
                 SizedBox(height:ScreenUtil().setWidth(15)),
                 TextButton(
-                  onPressed: ()async{
-                    try{
-                      await Provider.of<TodayProvider>(context,listen:false).deleteTask(id,DateFormat('yyyy/MM/dd').format(DateTime.now()));
-                      Navigator.of(context,rootNavigator: true).pop();
-                    }
-                    catch(e){
-                      throw e;
-                    }
-                  },
+                  onPressed:()=>func(),
                   child: Text('Yes',style:TextStyle(
                     color: Color(0xff7654f6)
                   )),
@@ -58,7 +52,7 @@ class Dialogs{
     );
   }
 
-  showTextField(BuildContext context) {
+  showTextFieldTimerPage(BuildContext context) {
     TextEditingController controller=TextEditingController();
     // set up the button
     Widget okButton = TextButton(
@@ -67,7 +61,51 @@ class Dialogs{
         try{
         if(controller.text.isEmpty) print('Enter task name');
         else{
-          Provider.of<TodayProvider>(context,listen:false).addTask(controller.text,DateFormat('yyyy/MM/dd').format(DateTime.now()));
+          Provider.of<TodayProvider>(context,listen:false).addTask(controller.text,formateDate(DateTime.now()));
+          Navigator.of(context,rootNavigator: true).pop();
+        }
+        }catch(e){
+          print(e);
+        }
+      },
+    );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: Color(0xff5f77f4),width: 2)
+      ),
+      // content: Text("Link has been sent to your Email Account"),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: controller,
+            decoration: InputDecoration(hintText: "Add Task name"),
+          )
+        ],
+      ),
+      actions: [okButton],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  showTextFieldCalendarPage(BuildContext context,DateTime date) {
+    TextEditingController controller=TextEditingController();
+    // set up the button
+    Widget okButton = TextButton(
+      child: Text("Save"),
+      onPressed: () {
+        try{
+        if(controller.text.isEmpty) print('Enter task name');
+        else{
+          Provider.of<CalendarProvider>(context,listen:false).addTask(controller.text,formateDate(date));
           Navigator.of(context,rootNavigator: true).pop();
         }
         }catch(e){
@@ -102,3 +140,4 @@ class Dialogs{
     );
   }
 }
+
