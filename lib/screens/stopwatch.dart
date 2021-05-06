@@ -28,6 +28,7 @@ class _StopwatchPageState extends State<StopwatchPage> {
   showAlertDialog(BuildContext context) async{
     if(_stopwatch.isRunning) return Utility.shared.showToast('Stop timer to edit');
    return await showCupertinoDialog(
+     barrierDismissible: true,
       context: context,
       builder: (BuildContext context) {
         return CupertinoTimerPicker(
@@ -83,6 +84,7 @@ class _StopwatchPageState extends State<StopwatchPage> {
      _stopwatch.reset();
     } else {
       _stopwatch.start();
+      if(!await Provider.of<TodayProvider>(context,listen:false).checkBreakTime())flutterLocalNotificationsPlugin.cancel(0);
     }
 
     setState(() {});
@@ -103,11 +105,13 @@ class _StopwatchPageState extends State<StopwatchPage> {
 
   onBreakTime()async{
     try{
+      if(!await Provider.of<TodayProvider>(context,listen:false).checkBreakTime()) return Utility.shared.showToast('Break time already in place');
       if(_stopwatch.isRunning) await handleStartStop();
       Utility.shared.showToast('Break time started');
+      Provider.of<TodayProvider>(context,listen:false).addNotification();
         await flutterLocalNotificationsPlugin.zonedSchedule
         (0, 'Get Back to work', 'Break Time is over get back to work',
-         tz.TZDateTime.now(tz.local).add(const Duration(seconds: 10)),
+         tz.TZDateTime.now(tz.local).add(const Duration(minutes: 10)),
           const NotificationDetails(
         android: AndroidNotificationDetails('0',
             '0', 'your channel',playSound: true,importance: Importance.max,priority: Priority.high,visibility: NotificationVisibility.public,

@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
     AndroidInitializationSettings('ic_launcher',);
 final IOSInitializationSettings initializationSettingsIOS =
     IOSInitializationSettings(
-        onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+        onDidReceiveLocalNotification: onDidReceiveLocalNotification,);
 final InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
     iOS: initializationSettingsIOS);

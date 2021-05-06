@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class _CalendarScreenState extends State<CalendarScreen>  {
 
   CalendarController calendarController;
   Duration initialtimer = new Duration();
+  Random random = new Random();
 
   initState(){
     calendarController = CalendarController();
@@ -34,6 +36,7 @@ class _CalendarScreenState extends State<CalendarScreen>  {
     // show the dialog
     return showCupertinoDialog(
       context: context,
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return CupertinoTimerPicker(
           backgroundColor: Colors.white,
@@ -67,8 +70,24 @@ class _CalendarScreenState extends State<CalendarScreen>  {
             //    mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TableCalendar(
+                calendarStyle: CalendarStyle(
+                  markersAlignment: Alignment.bottomCenter
+                ),
+                builders: CalendarBuilders(
+                  markersBuilder: (context,date,event,_){
+                    List<Widget> marker=[];
+                    marker.add(Container(
+                      alignment: Alignment.center,
+                      height: 30,width: 30,
+                      color: Utility.shared.color[random.nextInt(5)],
+                      child: Text(event.length.toString(),style: TextStyle(
+                        color: Colors.red
+                      ),),
+                    ));
+                    return marker;
+                  }
+                ),
                 onDaySelected: changeDate,
-                endDay: DateTime.now(),
                 events:calendarData.events() ,
                 initialSelectedDay: DateTime.now(),
                 calendarController: calendarController,
@@ -116,6 +135,7 @@ class _CalendarScreenState extends State<CalendarScreen>  {
                       padding: const EdgeInsets.only(right: 30.0),
                       child: InkWell(
                           onTap: () {
+                            if(formateDate(calendarCurrentDate)==formateDate(DateTime.now())) return Utility.shared.showToast('Cannot edit today timer');
                             showAlertDialog(context);
                           },
                           child: Icon(Icons.edit, color: Color(0xff5f77f4))),
@@ -150,6 +170,7 @@ class _CalendarScreenState extends State<CalendarScreen>  {
                 GestureDetector
                 (
                   onTap: ()async{
+                    if(formateDate(calendarCurrentDate)==formateDate(DateTime.now())) return Utility.shared.showToast('Cannot modify today tasks');
                     try{
                      await Provider.of<CalendarProvider>(context,listen:false).
                      updateTask(calendarData.selectedDateTask(formateDate(calendarCurrentDate))[i].date,
@@ -167,9 +188,12 @@ class _CalendarScreenState extends State<CalendarScreen>  {
                   physics: NeverScrollableScrollPhysics(),
               ),
               GestureDetector(
-                onTap: () => Dialogs.shared.showTextFieldCalendarPage(context,calendarCurrentDate),
+                onTap: () {
+                  if(formateDate(calendarCurrentDate)==formateDate(DateTime.now())) return Utility.shared.showToast('Cannot modify today tasks');
+                   Dialogs.shared.showTextFieldCalendarPage(context,calendarCurrentDate);
+                   },
                 child: Container(
-                  margin: EdgeInsets.all(6),
+                  margin: EdgeInsets.symmetric(vertical:ScreenUtil().setHeight(6),horizontal: ScreenUtil().setWidth(40)),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: Color(0xff7654f6),

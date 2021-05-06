@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:newui/dialogs/dialogs.dart';
 import 'package:newui/model/task.dart';
 import 'package:newui/provider/calendarProvider.dart';
+import 'package:newui/screens/calendarscreen.dart';
 import 'package:newui/utility.dart';
 import 'package:provider/provider.dart';
 
@@ -18,6 +19,7 @@ class CalendarPageTaskScreen extends StatefulWidget {
 class _CalendarPageTaskScreenState extends State<CalendarPageTaskScreen> {
 
   deleteTask(String id)async{
+    if(formateDate(calendarCurrentDate)==formateDate(DateTime.now())) return Utility.shared.showToast('Cannot delete today tasks');
     try{
      await Dialogs.shared.deleteTaskDialog(context, id, ()async{
                     try{

@@ -12,27 +12,31 @@ class TodayProvider with ChangeNotifier{
 
   Timer todayTimer=Timer(date: formateDate(DateTime.now()),time: 0);
 
-  bool isBreakTime=false;
 
-  Future<void> checkBreakTime()async{
+  Future<bool> checkBreakTime()async{
     try{
       SharedPreferences _prefs=await SharedPreferences.getInstance();
-      if(_prefs.containsKey('break')) isBreakTime=true;
-      else isBreakTime=false;
-      notifyListeners();
+      if(!_prefs.containsKey('break')) return true;
+     final date= _prefs.getString('break');
+     if(DateTime.now().difference(DateTime.parse(date)).inMinutes<10) return false;
+     return true;
     }
     catch(e){
       throw e;
     }
   }
   addNotification()async{
+    try{
     SharedPreferences _prefs=await SharedPreferences.getInstance();
-    await _prefs.setString('break', 'true');
-    await checkBreakTime();
+    await _prefs.setString('break', DateTime.now().toIso8601String());
+    }
+    catch(e){
+      throw e;
+    }
   }
 
   double get completedTask{
-    if(todayTask.length==0) return 1.0;
+    if(todayTask.length==0) return 0.0;
     List<Task> completeTask=todayTask.where((element) => element.isDone==1).toList();
     return completeTask.length/todayTask.length;
   }
