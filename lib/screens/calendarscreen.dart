@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +22,6 @@ class _CalendarScreenState extends State<CalendarScreen>  {
 
   CalendarController calendarController;
   Duration initialtimer = new Duration();
-  Random random = new Random();
 
   initState(){
     calendarController = CalendarController();
@@ -79,19 +77,16 @@ class _CalendarScreenState extends State<CalendarScreen>  {
           children: [
             TableCalendar(
               calendarStyle: CalendarStyle(
-                markersAlignment: Alignment.bottomRight
+                markersAlignment: Alignment.bottomCenter
               ),
               builders: CalendarBuilders(
                 markersBuilder: (context,date,event,_){
                   List<Widget> marker=[];
-                  marker.add(Container(
-                    alignment: Alignment.center,
-                    height: 30,width: 30,
-                    color: Utility.shared.color[random.nextInt(5)],
-                    child: Text(event.length.toString(),style: TextStyle(
-                      color: Colors.red
-                    ),),
-                  ));
+                  marker.add(
+                    CircleAvatar(
+                      radius: 5,backgroundColor: Colors.black,
+                    )
+                  );
                   return marker;
                 }
               ),
