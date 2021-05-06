@@ -50,10 +50,11 @@ class _TimePageState extends State<TimePage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.grey[300],
+        backgroundColor: Colors.grey[100],
+        elevation: 0,
         title: Text(
           "Timer",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w600,fontSize: 20),
         ),
       ),
       body: SingleChildScrollView(

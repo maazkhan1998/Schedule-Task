@@ -224,7 +224,7 @@ class _StopwatchPageState extends State<StopwatchPage> {
                       onTap: ()=>
                         showAlertDialog(context)
                       ,
-                      child: Icon(Icons.edit, color: Color(0xff5f77f4))))
+                      child: ImageIcon(AssetImage('assets/FeatherIconSet-Feather_Controls-edit-3@2x.png'), color: Color(0xff5f77f4))))
             ],
           ),
         ),
