@@ -6,6 +6,8 @@ import 'package:newui/model/timer.dart';
 import 'package:newui/utility.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../main.dart';
+
 class TodayProvider with ChangeNotifier{
 
   List<Task> todayTask=[];
@@ -128,6 +130,17 @@ class TodayProvider with ChangeNotifier{
     try{
       await DBHelper.shared.deleteDataTask(taskTable, id);
       await getTask(date);
+    }
+    catch(e){
+      throw e;
+    }
+  }
+
+  deleteNotification()async{
+    try{
+      await flutterLocalNotificationsPlugin.cancel(0);
+      SharedPreferences _prefs=await SharedPreferences.getInstance();
+      await _prefs.remove('break');
     }
     catch(e){
       throw e;

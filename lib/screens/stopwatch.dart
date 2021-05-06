@@ -84,7 +84,8 @@ class _StopwatchPageState extends State<StopwatchPage> {
      _stopwatch.reset();
     } else {
       _stopwatch.start();
-      if(!await Provider.of<TodayProvider>(context,listen:false).checkBreakTime())flutterLocalNotificationsPlugin.cancel(0);
+      if(!await Provider.of<TodayProvider>(context,listen:false).checkBreakTime())
+        await Provider.of<TodayProvider>(context,listen:false).deleteNotification();
     }
 
     setState(() {});
