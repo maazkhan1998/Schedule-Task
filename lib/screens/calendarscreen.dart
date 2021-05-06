@@ -71,7 +71,7 @@ class _CalendarScreenState extends State<CalendarScreen>  {
             children: [
               TableCalendar(
                 calendarStyle: CalendarStyle(
-                  markersAlignment: Alignment.bottomCenter
+                  markersAlignment: Alignment.bottomRight
                 ),
                 builders: CalendarBuilders(
                   markersBuilder: (context,date,event,_){

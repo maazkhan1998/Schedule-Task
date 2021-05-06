@@ -108,7 +108,7 @@ class _StopwatchPageState extends State<StopwatchPage> {
     try{
       if(!await Provider.of<TodayProvider>(context,listen:false).checkBreakTime()) return Utility.shared.showToast('Break time already in place');
       if(_stopwatch.isRunning) await handleStartStop();
-      Utility.shared.showToast('Break time started');
+      Utility.shared.showToast('Break time started for 10 mins');
       Provider.of<TodayProvider>(context,listen:false).addNotification();
         await flutterLocalNotificationsPlugin.zonedSchedule
         (0, 'Get Back to work', 'Break Time is over get back to work',

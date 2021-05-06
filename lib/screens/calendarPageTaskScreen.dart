@@ -64,12 +64,15 @@ class _CalendarPageTaskScreenState extends State<CalendarPageTaskScreen> {
             ),
           ),
           SizedBox(width: ScreenUtil().setWidth(40)),
-          Text(
-            widget.task.name,
-            style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: ScreenUtil().setSp(29)),
+          Expanded(
+                      child: Text(
+              widget.task.name,
+              maxLines: 1,overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: ScreenUtil().setSp(29)),
+            ),
           ),
           Spacer(),
           GestureDetector(

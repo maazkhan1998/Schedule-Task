@@ -138,6 +138,7 @@ class TodayProvider with ChangeNotifier{
 
   deleteNotification()async{
     try{
+      Utility.shared.showToast('Break Time cancelled');
       await flutterLocalNotificationsPlugin.cancel(0);
       SharedPreferences _prefs=await SharedPreferences.getInstance();
       await _prefs.remove('break');
