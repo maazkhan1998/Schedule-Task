@@ -16,7 +16,7 @@ class Utility{
 }
 
 showToast(String msg) =>
-   Fluttertoast.showToast(msg: msg,gravity: ToastGravity.BOTTOM);
+   Fluttertoast.showToast(msg: msg,gravity: ToastGravity.CENTER);
 
  List<Color> color=[Colors.yellow.withOpacity(0.7),Colors.green.withOpacity(0.7),Colors.blue.withOpacity(0.7),Colors.pink.withOpacity(0.7),Colors.orange.withOpacity(0.7)];
 
