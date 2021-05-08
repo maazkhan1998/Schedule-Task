@@ -115,8 +115,8 @@ class _StopwatchPageState extends State<StopwatchPage> {
          tz.TZDateTime.now(tz.local).add(const Duration(minutes: 10)),
           const NotificationDetails(
         android: AndroidNotificationDetails('0',
-            '0', 'your channel',playSound: true,importance: Importance.max,priority: Priority.high,visibility: NotificationVisibility.public,
-            enableLights: true,enableVibration: true,
+            '0', 'your channel',playSound: true,importance: Importance.max,priority: Priority.max,visibility: NotificationVisibility.public,
+            enableLights: true,enableVibration: true,fullScreenIntent: true,
             )),
              uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime, androidAllowWhileIdle: true); 
     }catch(e){
